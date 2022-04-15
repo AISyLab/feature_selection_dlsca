@@ -5,13 +5,7 @@ This repository contains the source code used to generate the results from the p
 
 To run experiments, the user needs to set the dataset paths in:
 
-```experimets/ASCADf/paths.py```
-
-```experimets/ASCADr/paths.py```
-
-```experimets/CHESCTF/paths.py```
-
-```experimets/DPAV42/paths.py```
+```experimets/paths.py```
 
 To prepare datasets, run following python scripts:
 
