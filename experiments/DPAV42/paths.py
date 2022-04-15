@@ -1,21 +1,21 @@
-root_folder = "/tudelft.net/staff-umbrella/dlsca/Guilherme/DPAV42/"
+root_folder = "/"
 
 directory_dataset = {
-    "RPOI": f"{root_folder}/DPAV42_rpoi",
-    "OPOI": f"{root_folder}/DPAV42_opoi",
-    "SOPOI": f"{root_folder}/DPAV42_sopoi",
-    "NOPOI": f"{root_folder}/DPAV42_nopoi"
+    "RPOI": f"{root_folder}DPAV42_rpoi",
+    "OPOI": f"{root_folder}DPAV42_opoi",
+    "SOPOI": f"{root_folder}DPAV42_sopoi",
+    "NOPOI": f"{root_folder}DPAV42_nopoi"
 }
 
 directory_save_folder = {
-    "RPOI": f"{root_folder}/DPAV42_rpoi/random_search",
-    "OPOI": f"{root_folder}/DPAV42_opoi/random_search",
-    "SOPOI": f"{root_folder}/DPAV42_sppoi/random_search",
-    "NOPOI": f"{root_folder}/DPAV42_nopoi/random_search"
+    "RPOI": f"{root_folder}DPAV42_rpoi/random_search",
+    "OPOI": f"{root_folder}DPAV42_opoi/random_search",
+    "SOPOI": f"{root_folder}DPAV42_sppoi/random_search",
+    "NOPOI": f"{root_folder}DPAV42_nopoi/random_search"
 }
 
 directory_save_folder_best_models = {
-    "NOPOI": f"{root_folder}/DPAV42_nopoi/best_models"
+    "NOPOI": f"{root_folder}DPAV42_nopoi/best_models"
 }
 
 

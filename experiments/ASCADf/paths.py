@@ -1,21 +1,21 @@
-root_folder = "/tudelft.net/staff-umbrella/dlsca/Guilherme/ASCADf/"
+root_folder = "/"
 
 directory_dataset = {
-    "RPOI": f"{root_folder}/ASCAD_rpoi",
-    "OPOI": f"{root_folder}/ASCAD_opoi",
-    "SOPOI": f"{root_folder}/ASCAD_sppoi",
-    "NOPOI": f"{root_folder}/ASCAD_nopoi"
+    "RPOI": f"{root_folder}ASCAD_rpoi",
+    "OPOI": f"{root_folder}ASCAD_opoi",
+    "SOPOI": f"{root_folder}ASCAD_sppoi",
+    "NOPOI": f"{root_folder}ASCAD_nopoi"
 }
 
 directory_save_folder = {
-    "RPOI": f"{root_folder}/ASCAD_rpoi/random_search",
-    "OPOI": f"{root_folder}/ASCAD_opoi/random_search",
-    "SOPOI": f"{root_folder}/ASCAD_sppoi/random_search",
-    "NOPOI": f"{root_folder}/ASCAD_nopoi/random_search"
+    "RPOI": f"{root_folder}ASCAD_rpoi/random_search",
+    "OPOI": f"{root_folder}ASCAD_opoi/random_search",
+    "SOPOI": f"{root_folder}ASCAD_sppoi/random_search",
+    "NOPOI": f"{root_folder}ASCAD_nopoi/random_search"
 }
 
 directory_save_folder_best_models = {
-    "NOPOI": f"{root_folder}/ASCAD_nopoi/best_models"
+    "NOPOI": f"{root_folder}ASCAD_nopoi/best_models"
 }
 
 

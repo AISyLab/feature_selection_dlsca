@@ -1,21 +1,21 @@
-root_folder = "/tudelft.net/staff-umbrella/dlsca/Guilherme/ASCADr/"
+root_folder = "/"
 
 directory_dataset = {
-    "RPOI": f"{root_folder}/ascad-variable_rpoi_low_snr",
-    "OPOI": f"{root_folder}/ascad-variable_opoi",
-    "SOPOI": f"{root_folder}/ascad-variable_sppoi",
-    "NOPOI": f"{root_folder}/ascad-variable_nopoi"
+    "RPOI": f"{root_folder}ascad-variable_rpoi_low_snr",
+    "OPOI": f"{root_folder}ascad-variable_opoi",
+    "SOPOI": f"{root_folder}ascad-variable_sppoi",
+    "NOPOI": f"{root_folder}ascad-variable_nopoi"
 }
 
 directory_save_folder = {
-    "RPOI": f"{root_folder}/ascad-variable_rpoi/random_search",
-    "OPOI": f"{root_folder}/ascad-variable_opoi/random_search",
-    "SOPOI": f"{root_folder}/ascad-variable_sppoi/random_search",
-    "NOPOI": f"{root_folder}/ascad-variable_nopoi/random_search"
+    "RPOI": f"{root_folder}ascad-variable_rpoi/random_search",
+    "OPOI": f"{root_folder}ascad-variable_opoi/random_search",
+    "SOPOI": f"{root_folder}ascad-variable_sppoi/random_search",
+    "NOPOI": f"{root_folder}ascad-variable_nopoi/random_search"
 }
 
 directory_save_folder_best_models = {
-    "NOPOI": f"{root_folder}/ascad-variable_nopoi/best_models"
+    "NOPOI": f"{root_folder}ascad-variable_nopoi/best_models"
 }
 
 
