@@ -1,7 +1,14 @@
 ### Neural networks for different feature selection scenarios for different AES128 datasets
 
 This repository contains the source code used to generate the results from the paper: 
-"Exploring Feature Scenarios in Deep Learning-based Profiled Side-Channel Analysis: and how much
-the model size matters".
+"Exploring Feature Scenarios in Deep Learning-based Profiled Side-Channel Analysis".
+
+Ex: to run best found models for ASCADf, key byte 0, NOPOI with resampling window of 20 
+(without desynchronization - False):
+
+python experiments/ASCADf/test_best_models.py HW mlp NOPOI 0 20 False
+python experiments/ASCADf/test_best_models.py ID mlp NOPOI 0 20 False
+python experiments/ASCADf/test_best_models.py HW cnn NOPOI 0 20 False
+python experiments/ASCADf/test_best_models.py ID cnn NOPOI 0 20 False
 
 
