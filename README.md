@@ -13,6 +13,16 @@ To run experiments, the user needs to set the dataset paths in:
 
 ```experimets/DPAV42/paths.py```
 
+To prepare datasets, run following python scripts:
+
+```experiments/ASCADf/generate_dataset.py```
+
+```experiments/ASCADr/generate_dataset.py```
+
+```experiments/CHESCTF/generate_dataset.py```
+
+```experiments/DPAV42/generate_dataset.py```
+
 Ex: to run best found models for ASCADf, key byte 0, NOPOI with resampling window of 20 
 (without desynchronization - False):
 
