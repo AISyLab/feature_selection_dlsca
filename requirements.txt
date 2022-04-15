@@ -9,3 +9,5 @@ h5py==2.10.0
 pytz
 sklearn
 scipy
+trsfile==0.3.2
+scalib
