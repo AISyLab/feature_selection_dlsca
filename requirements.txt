@@ -1,0 +1,11 @@
+numpy==1.19.4
+tensorflow-gpu==2.0.0
+matplotlib
+joblib
+keras==2.1.6
+python-dotenv
+pandas
+h5py==2.10.0
+pytz
+sklearn
+scipy

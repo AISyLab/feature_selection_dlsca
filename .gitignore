@@ -1,0 +1,17 @@
+.idea
+__pycache__/
+venv
+analysis
+update.sh
+run.sbatch
+run_ascadf_rpoi.sbatch
+run_ascadf_nopoi.sbatch
+run_ascadr_rpoi.sbatch
+run_ascadr_nopoi.sbatch
+run_dpav42_rpoi.sbatch
+run_dpav42_nopoi.sbatch
+run_dpav42_nopoi_da.sbatch
+run_dpav42_best_models.sbatch
+run_chesctf_nopoi.sbatch
+run_chesctf_nopoi_da.sbatch
+run_chesctf_best_models.sbatch
