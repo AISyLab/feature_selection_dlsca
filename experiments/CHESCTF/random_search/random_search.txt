@@ -1,1 +1,0 @@
-this folder will contain all npz files from random search
