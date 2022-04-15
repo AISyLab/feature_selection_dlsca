@@ -1,20 +1,19 @@
-dataset_folder = "/datasets/ASCADf"
-results_folder = "/results/ASCADf"
+from experiments.paths import *
 
 directory_dataset = {
-    "RPOI": f"{dataset_folder}/ASCAD_rpoi",
-    "OPOI": f"{dataset_folder}/ASCAD_opoi",
-    "NOPOI": f"{dataset_folder}/ASCAD_nopoi"
+    "RPOI": f"{dataset_folder_ascadf}/ASCAD_rpoi",
+    "OPOI": f"{dataset_folder_ascadf}/ASCAD_opoi",
+    "NOPOI": f"{dataset_folder_ascadf}/ASCAD_nopoi"
 }
 
 directory_save_folder = {
-    "RPOI": f"{results_folder}/ASCAD_rpoi/random_search",
-    "OPOI": f"{results_folder}/ASCAD_opoi/random_search",
-    "NOPOI": f"{results_folder}/ASCAD_nopoi/random_search"
+    "RPOI": f"{results_folder_ascadf}/ASCAD_rpoi/random_search",
+    "OPOI": f"{results_folder_ascadf}/ASCAD_opoi/random_search",
+    "NOPOI": f"{results_folder_ascadf}/ASCAD_nopoi/random_search"
 }
 
 directory_save_folder_best_models = {
-    "NOPOI": f"{results_folder}/ASCAD_nopoi/best_models"
+    "NOPOI": f"{results_folder_ascadf}/ASCAD_nopoi/best_models"
 }
 
 

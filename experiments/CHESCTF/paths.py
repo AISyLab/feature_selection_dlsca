@@ -1,18 +1,17 @@
-dataset_folder = "/datasets/CHESCTF"
-results_folder = "/results/CHESCTF"
+from experiments.paths import *
 
 directory_dataset = {
-    "OPOI": f"{dataset_folder}/CHESCTF_opoi",
-    "NOPOI": f"{dataset_folder}/CHESCTF_nopoi"
+    "OPOI": f"{dataset_folder_chesctf}/CHESCTF_opoi",
+    "NOPOI": f"{dataset_folder_chesctf}/CHESCTF_nopoi"
 }
 
 directory_save_folder = {
-    "OPOI": f"{results_folder}/CHESCTF_opoi/random_search",
-    "NOPOI": f"{results_folder}/CHESCTF_nopoi/random_search"
+    "OPOI": f"{results_folder_chesctf}/CHESCTF_opoi/random_search",
+    "NOPOI": f"{results_folder_chesctf}/CHESCTF_nopoi/random_search"
 }
 
 directory_save_folder_best_models = {
-    "NOPOI": f"{results_folder}/CHESCTF_nopoi/best_models"
+    "NOPOI": f"{results_folder_chesctf}/CHESCTF_nopoi/best_models"
 }
 
 

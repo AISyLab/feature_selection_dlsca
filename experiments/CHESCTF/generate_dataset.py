@@ -44,10 +44,8 @@ def load_trs_trace(filename, number_of_traces, number_of_samples, data_length, n
     ciphertexts = np.zeros((number_of_traces, 16), dtype=np.uint8)
     keys = np.zeros((number_of_traces, 16), dtype=np.uint8)
 
-    trace_folder = "/"
-
     """ The second file contains traces shifted by 800 samples in acquisition phase """
-    if filename == f"{trace_folder}PinataAcqTask2.2_10k_upload.trs":
+    if filename == f"{raw_trace_folder_chesctf}/PinataAcqTask2.2_10k_upload.trs":
         sample_offset = 800
     else:
         sample_offset = 0
@@ -145,28 +143,28 @@ def generate_nopoi(window):
     profiling_ciphertexts = np.zeros((n_profiling, 16))
     profiling_keys = np.zeros((n_profiling, 16))
 
-    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{root_folder}/PinataAcqTask2.1_10k_upload.trs", n_traces_file, 150000, 48,
+    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{raw_trace_folder_chesctf}/PinataAcqTask2.1_10k_upload.trs", n_traces_file, 150000, 48,
                                                             number_of_samples_resampled=number_of_samples, window=window)
     profiling_samples[:n_traces_file] = samples
     profiling_plaintexts[:n_traces_file] = plaintexts
     profiling_ciphertexts[:n_traces_file] = ciphertexts
     profiling_keys[:n_traces_file] = keys
 
-    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{root_folder}/PinataAcqTask2.2_10k_upload.trs", n_traces_file, 150000, 48,
+    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{raw_trace_folder_chesctf}/PinataAcqTask2.2_10k_upload.trs", n_traces_file, 150000, 48,
                                                             number_of_samples_resampled=number_of_samples, window=window)
     profiling_samples[n_traces_file:n_traces_file * 2] = samples
     profiling_plaintexts[n_traces_file:n_traces_file * 2] = plaintexts
     profiling_ciphertexts[n_traces_file:n_traces_file * 2] = ciphertexts
     profiling_keys[n_traces_file:n_traces_file * 2] = keys
 
-    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{root_folder}/PinataAcqTask2.3_10k_upload.trs", n_traces_file, 150000, 48,
+    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{raw_trace_folder_chesctf}/PinataAcqTask2.3_10k_upload.trs", n_traces_file, 150000, 48,
                                                             number_of_samples_resampled=number_of_samples, window=window)
     profiling_samples[n_traces_file * 2:n_traces_file * 3] = samples
     profiling_plaintexts[n_traces_file * 2:n_traces_file * 3] = plaintexts
     profiling_ciphertexts[n_traces_file * 2:n_traces_file * 3] = ciphertexts
     profiling_keys[n_traces_file * 2:n_traces_file * 3] = keys
 
-    attack_samples, attack_plaintexts, attack_ciphertexts, attack_keys = load_trs_trace(f"{root_folder}/PinataAcqTask2.4_10k_upload.trs",
+    attack_samples, attack_plaintexts, attack_ciphertexts, attack_keys = load_trs_trace(f"{raw_trace_folder_chesctf}/PinataAcqTask2.4_10k_upload.trs",
                                                                                         n_traces_file, 150000, 48,
                                                                                         number_of_samples_resampled=number_of_samples,
                                                                                         window=window)
@@ -208,28 +206,28 @@ def generate_nopoi_desync(window):
     profiling_ciphertexts = np.zeros((n_profiling, 16))
     profiling_keys = np.zeros((n_profiling, 16))
 
-    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{root_folder}/PinataAcqTask2.1_10k_upload.trs", n_traces_file, 150000, 48,
+    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{raw_trace_folder_chesctf}/PinataAcqTask2.1_10k_upload.trs", n_traces_file, 150000, 48,
                                                             number_of_samples_resampled=number_of_samples, window=window, desync=True)
     profiling_samples[:n_traces_file] = samples
     profiling_plaintexts[:n_traces_file] = plaintexts
     profiling_ciphertexts[:n_traces_file] = ciphertexts
     profiling_keys[:n_traces_file] = keys
 
-    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{root_folder}/PinataAcqTask2.2_10k_upload.trs", n_traces_file, 150000, 48,
+    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{raw_trace_folder_chesctf}/PinataAcqTask2.2_10k_upload.trs", n_traces_file, 150000, 48,
                                                             number_of_samples_resampled=number_of_samples, window=window, desync=True)
     profiling_samples[n_traces_file:n_traces_file * 2] = samples
     profiling_plaintexts[n_traces_file:n_traces_file * 2] = plaintexts
     profiling_ciphertexts[n_traces_file:n_traces_file * 2] = ciphertexts
     profiling_keys[n_traces_file:n_traces_file * 2] = keys
 
-    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{root_folder}/PinataAcqTask2.3_10k_upload.trs", n_traces_file, 150000, 48,
+    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{raw_trace_folder_chesctf}/PinataAcqTask2.3_10k_upload.trs", n_traces_file, 150000, 48,
                                                             number_of_samples_resampled=number_of_samples, window=window, desync=True)
     profiling_samples[n_traces_file * 2:n_traces_file * 3] = samples
     profiling_plaintexts[n_traces_file * 2:n_traces_file * 3] = plaintexts
     profiling_ciphertexts[n_traces_file * 2:n_traces_file * 3] = ciphertexts
     profiling_keys[n_traces_file * 2:n_traces_file * 3] = keys
 
-    attack_samples, attack_plaintexts, attack_ciphertexts, attack_keys = load_trs_trace(f"{root_folder}/PinataAcqTask2.4_10k_upload.trs",
+    attack_samples, attack_plaintexts, attack_ciphertexts, attack_keys = load_trs_trace(f"{raw_trace_folder_chesctf}/PinataAcqTask2.4_10k_upload.trs",
                                                                                         n_traces_file, 150000, 48,
                                                                                         number_of_samples_resampled=number_of_samples,
                                                                                         window=window, desync=True)

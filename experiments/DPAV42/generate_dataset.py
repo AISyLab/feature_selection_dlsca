@@ -188,8 +188,7 @@ def generate_rpoi(gaussian_noise=None):
 
         print("Opening dataset")
 
-        trace_folder = "/"
-        in_file = h5py.File(f'{trace_folder}dpa_v42_full.h5', 'r')
+        in_file = h5py.File(f'{raw_trace_folder_dpav42}/dpa_v42_full.h5', 'r')
         profiling_samples = np.array(in_file['Profiling_traces/traces'], dtype=np.float16)
         attack_samples = np.array(in_file['Attack_traces/traces'], dtype=np.float16)
         profiling_keys = in_file['Profiling_traces/metadata']['key']
@@ -364,8 +363,7 @@ def generate_nopoi(window, desync=False):
     n_attack = 10000
     number_of_samples = 150000
 
-    trace_folder = "/"
-    in_file = h5py.File(f'{trace_folder}dpa_v42_full.h5', 'r')
+    in_file = h5py.File(f'{directory_dataset["NOPOI"]}/dpa_v42_full.h5', 'r')
     profiling_samples = np.array(in_file['Profiling_traces/traces'], dtype=np.float32)[:, 150000:]
     attack_samples = np.array(in_file['Attack_traces/traces'], dtype=np.float32)[:, 150000:]
     profiling_key = in_file['Profiling_traces/metadata']['key']
@@ -414,9 +412,9 @@ def generate_nopoi(window, desync=False):
     attack_index = [n for n in range(n_attack)]
 
     if desync:
-        out_file = h5py.File(f'{trace_folder}DPAV42_nopoi/dpa_v42_nopoi_window_{window}_desync.h5', 'w')
+        out_file = h5py.File(f'{directory_dataset["NOPOI"]}/dpa_v42_nopoi_window_{window}_desync.h5', 'w')
     else:
-        out_file = h5py.File(f'{trace_folder}DPAV42_nopoi/dpa_v42_nopoi_window_{window}.h5', 'w')
+        out_file = h5py.File(f'{directory_dataset["NOPOI"]}/dpa_v42_nopoi_window_{window}.h5', 'w')
     profiling_traces_group = out_file.create_group("Profiling_traces")
     attack_traces_group = out_file.create_group("Attack_traces")
 
@@ -467,8 +465,7 @@ def generate_nopoi_15000():
     profiling_index = [n for n in range(n_profiling)]
     attack_index = [n for n in range(n_attack)]
 
-    trace_folder = "/"
-    out_file = h5py.File(f'{trace_folder}DPAV42_nopoi/dpa_v42_nopoi_15000.h5', 'w')
+    out_file = h5py.File(f'{directory_dataset["NOPOI"]}/dpa_v42_nopoi_15000.h5', 'w')
 
     profiling_traces_group = out_file.create_group("Profiling_traces")
     attack_traces_group = out_file.create_group("Attack_traces")
@@ -504,8 +501,8 @@ def merge_dataset():
     n_attack = 10000
 
     print("opening dpa_v42_0_100000")
-    trace_folder = "/"
-    in_file = h5py.File(f'{trace_folder}dpa_v42_0_100000.h5', 'r')
+
+    in_file = h5py.File(f'{directory_dataset["NOPOI"]}/dpa_v42_0_100000.h5', 'r')
     plaintexts = in_file['Attack_traces/metadata']['plaintext']
     ciphertexts = in_file['Attack_traces/metadata']['ciphertext']
     masks = in_file['Attack_traces/metadata']['masks']
@@ -529,7 +526,7 @@ def merge_dataset():
         fs = ns_chunck * s_i
 
         print(f"opening dpa_v42_{fs}_{fs + ns_chunck} ...")
-        in_file = h5py.File(f"{trace_folder}dpa_v42_{fs}_{fs + ns_chunck}.h5", 'r')
+        in_file = h5py.File(f"{raw_trace_folder_dpav42}/dpa_v42_{fs}_{fs + ns_chunck}.h5", 'r')
         profiling_samples[:, (s_i - 1) * ns_chunck: s_i * ns_chunck] = np.array(in_file['Attack_traces/traces'], dtype=np.float32)[
                                                                        :n_profiling]
         attack_samples[:, (s_i - 1) * ns_chunck: s_i * ns_chunck] = np.array(in_file['Attack_traces/traces'], dtype=np.float32)[
@@ -540,7 +537,7 @@ def merge_dataset():
     profiling_index = [n for n in range(n_profiling)]
     attack_index = [n for n in range(n_attack)]
 
-    out_file = h5py.File(f'{trace_folder}dpa_v42_full.h5', 'w')
+    out_file = h5py.File(f'{directory_dataset["NOPOI"]}/dpa_v42_full.h5', 'w')
 
     profiling_traces_group = out_file.create_group("Profiling_traces")
     attack_traces_group = out_file.create_group("Attack_traces")

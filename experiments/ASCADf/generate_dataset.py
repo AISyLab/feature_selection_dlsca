@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from paths import *
 from numba import njit
 from tqdm import tqdm
+from experiments.paths import *
 
 AES_Sbox = np.array([
     0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76,
@@ -42,8 +43,7 @@ def compute_snr():
     r_out_byte = 0
     target_byte = 2
 
-    trace_folder = "/"
-    in_file = h5py.File(f'{trace_folder}ATMega8515_raw_traces.h5', "r")
+    in_file = h5py.File(f'{raw_trace_folder_ascadf}ATMega8515_raw_traces.h5', "r")
     traces = in_file["traces"]
     metadata = in_file["metadata"]
 
@@ -213,8 +213,7 @@ def generate_rpoi(gaussian_noise=None, leakage_model="ID"):
     r_out_byte = 0
     target_byte = 2
 
-    trace_folder = "/"
-    in_file = h5py.File(f'{trace_folder}ATMega8515_raw_traces.h5', "r")
+    in_file = h5py.File(f'{raw_trace_folder_ascadf}ATMega8515_raw_traces.h5', "r")
     traces = in_file["traces"]
     metadata = in_file["metadata"]
 
@@ -325,8 +324,7 @@ def generate_nopoi(window):
     n_profiling = 50000
     n_attack = 10000
 
-    trace_folder = "/"
-    in_file = h5py.File(f'{trace_folder}ATMega8515_raw_traces.h5', "r")
+    in_file = h5py.File(f'{raw_trace_folder_ascadf}ATMega8515_raw_traces.h5', "r")
     traces = in_file["traces"]
     metadata = in_file["metadata"]
 

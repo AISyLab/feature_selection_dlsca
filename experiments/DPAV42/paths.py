@@ -1,20 +1,19 @@
-dataset_folder = "/datasets/DPAV42"
-results_folder = "/results/DPAV42"
+from experiments.paths import *
 
 directory_dataset = {
-    "RPOI": f"{dataset_folder}/DPAV42_rpoi",
-    "OPOI": f"{dataset_folder}/DPAV42_opoi",
-    "NOPOI": f"{dataset_folder}/DPAV42_nopoi"
+    "RPOI": f"{dataset_folder_dpav42}/DPAV42_rpoi",
+    "OPOI": f"{dataset_folder_dpav42}/DPAV42_opoi",
+    "NOPOI": f"{dataset_folder_dpav42}/DPAV42_nopoi"
 }
 
 directory_save_folder = {
-    "RPOI": f"{results_folder}/DPAV42_rpoi/random_search",
-    "OPOI": f"{results_folder}/DPAV42_opoi/random_search",
-    "NOPOI": f"{results_folder}/DPAV42_nopoi/random_search"
+    "RPOI": f"{results_folder_dpav42}/DPAV42_rpoi/random_search",
+    "OPOI": f"{results_folder_dpav42}/DPAV42_opoi/random_search",
+    "NOPOI": f"{results_folder_dpav42}/DPAV42_nopoi/random_search"
 }
 
 directory_save_folder_best_models = {
-    "NOPOI": f"{results_folder}/DPAV42_nopoi/best_models"
+    "NOPOI": f"{results_folder_dpav42}/DPAV42_nopoi/best_models"
 }
 
 
