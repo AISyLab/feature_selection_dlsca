@@ -21,7 +21,7 @@ scenarios (RPOI, OPOI, NOPOI, NOPOI_DESYNC) and for all datasets (ASCADf, ASCADr
 3. Download DPAV42 raw traces: https://www.dpacontest.org/v4/42_traces.php
 4. Download CHESCTF raw traces: https://zenodo.org/record/3733418#.Yc2iq1ko9Pa
 
-##### 4. Set sys.path.append in scripts (to avoid import issues)
+##### 4. Set ```sys.path.append``` in scripts (to avoid import issues)
 
 Set the following line:
 
