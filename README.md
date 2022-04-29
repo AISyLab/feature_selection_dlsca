@@ -16,10 +16,10 @@ scenarios (RPOI, OPOI, NOPOI, NOPOI_DESYNC) and for all datasets (ASCADf, ASCADr
 
 ##### 3. Download raw datasets
 
-Download ASCADf raw traces: https://github.com/ANSSI-FR/ASCAD/tree/master/ATMEGA_AES_v1/ATM_AES_v1_fixed_key
-Download ASCADr raw traces: https://github.com/ANSSI-FR/ASCAD/tree/master/ATMEGA_AES_v1/ATM_AES_v1_variable_key
-Download DPAV42 raw traces: https://www.dpacontest.org/v4/42_traces.php
-Download CHESCTF raw traces: https://zenodo.org/record/3733418#.Yc2iq1ko9Pa
+1. Download ASCADf raw traces: https://github.com/ANSSI-FR/ASCAD/tree/master/ATMEGA_AES_v1/ATM_AES_v1_fixed_key
+2. Download ASCADr raw traces: https://github.com/ANSSI-FR/ASCAD/tree/master/ATMEGA_AES_v1/ATM_AES_v1_variable_key
+3. Download DPAV42 raw traces: https://www.dpacontest.org/v4/42_traces.php
+4. Download CHESCTF raw traces: https://zenodo.org/record/3733418#.Yc2iq1ko9Pa
 
 ##### 4. Set sys.path.append in scripts (to avoid import issues)
 
