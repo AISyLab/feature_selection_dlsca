@@ -11,3 +11,6 @@ sklearn
 scipy
 trsfile==0.3.2
 scalib
+numba
+tqdm
+matplotlib

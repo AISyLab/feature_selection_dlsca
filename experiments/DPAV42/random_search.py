@@ -20,7 +20,18 @@ from src.random_models.random_cnn import *
 from src.datasets.ReadDPAV42 import ReadDPAV42
 from src.datasets.dataset_parameters import *
 from src.sca_metrics.sca_metrics import sca_metrics
-from experiments.DPAV42.paths import *
+from experiments.paths import *
+
+
+def dataset_name(fs_type, num_poi, resampling_window):
+    dataset_name = {
+        "RPOI": f"dpa_v42_{num_poi}poi.h5",
+        "OPOI": "dpa_v42_opoi.h5",
+        "NOPOI": f"dpa_v42_nopoi_window_{resampling_window}.h5",
+        "NOPOI_DESYNC": f"dpa_v42_nopoi_window_{resampling_window}_desync.h5"
+    }
+
+    return dataset_name[fs_type]
 
 if __name__ == "__main__":
 
@@ -31,14 +42,26 @@ if __name__ == "__main__":
     number_of_searches = int(sys.argv[5])
     regularization = True if sys.argv[6] == "True" else False
     window = int(sys.argv[7])
-    desync = True if sys.argv[8] == "True" else False
 
-    data_folder = directory_dataset[feature_selection_type]
-    save_folder = directory_save_folder[feature_selection_type]
-    if desync:
-        filename = f"{data_folder}/{dataset_name_desync(feature_selection_type, window=window)}"
+    if feature_selection_type == "RPOI":
+        dataset_folder = dataset_folder_dpav42_rpoi
+        save_folder = results_folder_dpav42_rpoi
+    elif feature_selection_type == "OPOI":
+        dataset_folder = dataset_folder_dpav42_opoi
+        save_folder = results_folder_dpav42_opoi
+    elif feature_selection_type == "NOPOI":
+        dataset_folder = dataset_folder_dpav42_nopoi
+        save_folder = results_folder_dpav42_nopoi
+    elif feature_selection_type == "NOPOI_DESYNC":
+        dataset_folder = dataset_folder_dpav42_nopoi_desync
+        save_folder = results_folder_dpav42_nopoi_desync
     else:
-        filename = f"{data_folder}/{dataset_name(feature_selection_type, npoi, window=window)}"
+        dataset_folder = None
+        save_folder = None
+        print("ERROR: Feature selection type not found.")
+        exit()
+
+    filename = f"{dataset_folder}/{dataset_name(feature_selection_type, npoi, resampling_window=window)}"
 
     """ Parameters for the analysis """
     classes = 9 if leakage_model == "HW" else 256

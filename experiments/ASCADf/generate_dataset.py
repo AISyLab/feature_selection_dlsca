@@ -1,11 +1,13 @@
 import numpy as np
 import h5py
 from scalib.metrics import SNR
-import matplotlib.pyplot as plt
-from paths import *
 from numba import njit
 from tqdm import tqdm
 from experiments.paths import *
+import sys
+
+# put root project folder path here:
+sys.path.append('/project_root_folder')
 
 AES_Sbox = np.array([
     0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76,
@@ -35,175 +37,6 @@ def winres(trace, window=20, overlap=0.5):
     for i in range(0, max, step):
         trace_winres.append(np.mean(trace[i:i + window]))
     return np.array(trace_winres)
-
-
-def compute_snr():
-    n_profiling = 50000
-    ns = 100000
-    r_out_byte = 0
-    target_byte = 2
-
-    in_file = h5py.File(f'{raw_trace_folder_ascadf}ATMega8515_raw_traces.h5', "r")
-    traces = in_file["traces"]
-    metadata = in_file["metadata"]
-
-    profiling_samples = traces[:n_profiling]
-    print(np.shape(profiling_samples))
-
-    raw_plaintexts = metadata['plaintext']
-    raw_keys = metadata['key']
-    raw_masks = metadata['masks']
-
-    profiling_plaintext = raw_plaintexts[:n_profiling]
-    profiling_key = raw_keys[:n_profiling]
-    profiling_masks = raw_masks[:n_profiling]
-
-    s_box_masked = [[AES_Sbox[int(p) ^ int(k)] ^ int(r), r] for p, k, r in
-                    zip(
-                        np.asarray(profiling_plaintext[:, target_byte]),
-                        np.asarray(profiling_key[:, target_byte]),
-                        np.asarray(profiling_masks[:, r_out_byte]))
-                    ]
-
-    snr = SNR(np=2, ns=ns, nc=256)
-    snr.fit_u(np.array(profiling_samples, dtype=np.int16), x=np.array(s_box_masked, dtype=np.uint16))
-    snr_val = snr.get_snr()
-    figure = plt.gcf()
-    figure.set_size_inches(12, 3)
-    plt.plot(snr_val[1], linewidth=1, zorder=1, label="$r_{2}$")
-    plt.plot(snr_val[0], linewidth=1, zorder=1, label="$S(p_{2}\oplus k_{2}) \oplus r_{2}$")
-    plt.xlabel("Samples", fontsize=12)
-    plt.ylabel("SNR", fontsize=12)
-    plt.xlim([0, ns])
-    plt.legend(fontsize=12)
-    plt.xticks(fontsize=12)
-    plt.yticks(fontsize=12)
-    plt.tight_layout()
-    plt.savefig(f'{directory_dataset["NOPOI"]}/ASCAD_snr_nopoi.png', dpi=100)
-
-
-def compute_snr_nopoi(window):
-    r_out_byte = 0
-    target_byte = 2
-
-    in_file = h5py.File(f'{directory_dataset["NOPOI"]}/ASCAD_nopoi_window_{window}.h5', 'r')
-
-    profiling_samples = np.array(in_file['Profiling_traces/traces'], dtype=np.float32)
-    profiling_plaintext = in_file['Profiling_traces/metadata']['plaintext']
-    profiling_key = in_file['Profiling_traces/metadata']['key']
-    profiling_masks = in_file['Profiling_traces/metadata']['masks']
-
-    s_box_masked = [[AES_Sbox[int(p) ^ int(k)] ^ int(r), r] for p, k, r in
-                    zip(
-                        np.asarray(profiling_plaintext[:, target_byte]),
-                        np.asarray(profiling_key[:, target_byte]),
-                        np.asarray(profiling_masks[:, r_out_byte]))
-                    ]
-
-    n_poi = len(profiling_samples[0])
-
-    snr = SNR(np=2, ns=n_poi, nc=256)
-    snr.fit_u(np.array(profiling_samples, dtype=np.int16), x=np.array(s_box_masked, dtype=np.uint16))
-    snr_val = snr.get_snr()
-    figure = plt.gcf()
-    figure.set_size_inches(12, 3)
-    plt.plot(snr_val[1], linewidth=1, zorder=1, label="$r_{2}$")
-    plt.plot(snr_val[0], linewidth=1, zorder=1, label="$S(p_{2}\oplus k_{2}) \oplus r_{2}$")
-    plt.xlabel("Samples", fontsize=12)
-    plt.ylabel("SNR", fontsize=12)
-    plt.xlim([0, n_poi])
-    plt.legend(fontsize=12)
-    plt.xticks(fontsize=12)
-    plt.yticks(fontsize=12)
-    plt.tight_layout()
-    plt.savefig(f'{directory_dataset["NOPOI"]}/ASCAD_snr_nopoi_window_{window}.png', dpi=100)
-    plt.close()
-
-
-def compute_snr_rpoi(n_poi, leakage_model):
-    r_out_byte = 0
-    target_byte = 2
-
-    if leakage_model == "ID":
-        in_file = h5py.File(f'{directory_dataset["RPOI"]}/ASCAD_{n_poi}poi.h5', 'r')
-    else:
-        in_file = h5py.File(f'{directory_dataset["RPOI"]}/ASCAD_{n_poi}poi_hw.h5', 'r')
-
-    profiling_samples = np.array(in_file['Profiling_traces/traces'], dtype=np.float32)
-    profiling_plaintext = in_file['Profiling_traces/metadata']['plaintext']
-    profiling_key = in_file['Profiling_traces/metadata']['key']
-    profiling_masks = in_file['Profiling_traces/metadata']['masks']
-
-    if leakage_model == "ID":
-        s_box_masked = [[AES_Sbox[int(p) ^ int(k)] ^ int(r), r] for p, k, r in
-                        zip(
-                            np.asarray(profiling_plaintext[:, target_byte]),
-                            np.asarray(profiling_key[:, target_byte]),
-                            np.asarray(profiling_masks[:, r_out_byte]))
-                        ]
-    else:
-        s_box_masked = [[bin(AES_Sbox[int(p) ^ int(k)] ^ int(r)).count("1"), bin(r).count("1")] for p, k, r in
-                        zip(
-                            np.asarray(profiling_plaintext[:, target_byte]),
-                            np.asarray(profiling_key[:, target_byte]),
-                            np.asarray(profiling_masks[:, r_out_byte]))
-                        ]
-
-    snr = SNR(np=2, ns=n_poi, nc=256 if leakage_model == "ID" else 9)
-    snr.fit_u(np.array(profiling_samples, dtype=np.int16), x=np.array(s_box_masked, dtype=np.uint16))
-    snr_val = snr.get_snr()
-    figure = plt.gcf()
-    figure.set_size_inches(12, 3)
-    plt.plot(snr_val[1], linewidth=1, zorder=1, label="$r_{2}$")
-    plt.plot(snr_val[0], linewidth=1, zorder=1, label="$S(p_{2}\oplus k_{2}) \oplus r_{2}$")
-    plt.xlabel("Samples", fontsize=12)
-    plt.ylabel("SNR", fontsize=12)
-    plt.xlim([0, n_poi])
-    plt.legend(fontsize=12)
-    plt.xticks(fontsize=12)
-    plt.yticks(fontsize=12)
-    plt.tight_layout()
-    if leakage_model == "ID":
-        plt.savefig(f'{directory_dataset["RPOI"]}/ASCAD_snr_{n_poi}poi.png', dpi=100)
-    else:
-        plt.savefig(f'{directory_dataset["RPOI"]}/ASCAD_snr_{n_poi}poi_hw.png', dpi=100)
-    plt.close()
-
-
-def compute_snr_opoi():
-    r_out_byte = 0
-    target_byte = 2
-
-    in_file = h5py.File(f'{directory_dataset["OPOI"]}/ASCAD.h5', 'r')
-
-    profiling_samples = np.array(in_file['Profiling_traces/traces'], dtype=np.float32)
-    profiling_plaintext = in_file['Profiling_traces/metadata']['plaintext']
-    profiling_key = in_file['Profiling_traces/metadata']['key']
-    profiling_masks = in_file['Profiling_traces/metadata']['masks']
-
-    s_box_masked = [[AES_Sbox[int(p) ^ int(k)] ^ int(r), r] for p, k, r in
-                    zip(
-                        np.asarray(profiling_plaintext[:, target_byte]),
-                        np.asarray(profiling_key[:, target_byte]),
-                        np.asarray(profiling_masks[:, r_out_byte]))
-                    ]
-
-    snr = SNR(np=2, ns=len(profiling_samples[0]), nc=256)
-    snr.fit_u(np.array(profiling_samples, dtype=np.int16), x=np.array(s_box_masked, dtype=np.uint16))
-    snr_val = snr.get_snr()
-    figure = plt.gcf()
-    figure.set_size_inches(4, 2)
-    plt.plot(snr_val[1], linewidth=1, zorder=1, label="$r_{2}$")
-    plt.plot(snr_val[0], linewidth=1, zorder=1, label="$S(p_{2}\oplus k_{2}) \oplus r_{2}$")
-    plt.xlabel("Samples", fontsize=12)
-    plt.ylabel("SNR", fontsize=12)
-    plt.xlim([0, len(profiling_samples[0])])
-    plt.legend(fontsize=12)
-    plt.xticks(fontsize=12)
-    plt.yticks(fontsize=12)
-    plt.tight_layout()
-    plt.savefig(f'{directory_dataset["OPOI"]}/ASCAD_snr_opoi.png', dpi=100)
-    plt.close()
 
 
 def generate_rpoi(gaussian_noise=None, leakage_model="ID"):
@@ -283,9 +116,9 @@ def generate_rpoi(gaussian_noise=None, leakage_model="ID"):
         attack_index = [n for n in range(n_attack)]
 
         if leakage_model == "ID":
-            out_file = h5py.File(f'{directory_dataset["RPOI"]}/ASCAD_{n_poi}poi.h5', 'w')
+            out_file = h5py.File(f'{dataset_folder_ascadf_rpoi}/ASCAD_{n_poi}poi.h5', 'w')
         else:
-            out_file = h5py.File(f'{directory_dataset["RPOI"]}/ASCAD_{n_poi}poi_hw.h5', 'w')
+            out_file = h5py.File(f'{dataset_folder_ascadf_rpoi}/ASCAD_{n_poi}poi_hw.h5', 'w')
 
         profiling_traces_group = out_file.create_group("Profiling_traces")
         attack_traces_group = out_file.create_group("Attack_traces")
@@ -314,10 +147,6 @@ def generate_rpoi(gaussian_noise=None, leakage_model="ID"):
 
         out_file.flush()
         out_file.close()
-
-        compute_snr_rpoi(n_poi, leakage_model)
-
-        print(n_poi)
 
 
 def generate_nopoi(window):
@@ -348,7 +177,7 @@ def generate_nopoi(window):
     attack_key = raw_keys[n_profiling:n_profiling + n_attack]
     attack_masks = raw_masks[n_profiling:n_profiling + n_attack]
 
-    out_file = h5py.File(f'{directory_dataset["NOPOI"]}/ASCAD_nopoi_window_{window}.h5', 'w')
+    out_file = h5py.File(f'{dataset_folder_ascadf_nopoi}/ASCAD_nopoi_window_{window}.h5', 'w')
 
     profiling_index = [n for n in range(n_profiling)]
     attack_index = [n for n in range(n_attack)]
@@ -378,8 +207,6 @@ def generate_nopoi(window):
 
     out_file.flush()
     out_file.close()
-
-    compute_snr_nopoi(window)
 
 
 if __name__ == "__main__":

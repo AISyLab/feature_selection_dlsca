@@ -1,11 +1,13 @@
 import numpy as np
 from scalib.metrics import SNR
-import matplotlib.pyplot as plt
 import h5py
 from numba import njit
-from paths import *
 from tqdm import tqdm
 import random
+import sys
+from experiments.paths import *
+
+sys.path.append('/project_root_folder')
 
 AES_Sbox = np.array([
     0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76,
@@ -35,149 +37,6 @@ def winres(trace, window=20, overlap=0.5):
     for i in range(0, max, step):
         trace_winres.append(np.mean(trace[i:i + window]))
     return np.array(trace_winres)
-
-
-def compute_snr(feature_selection_type, window=10):
-    in_file = h5py.File(f'{directory_dataset[feature_selection_type]}/dpa_v42_{feature_selection_type.lower()}.h5', "r")
-    profiling_samples = np.array(in_file['Profiling_traces/traces'], dtype=np.float32)
-    profiling_keys = in_file['Profiling_traces/metadata']['key']
-    profiling_plaintexts = in_file['Profiling_traces/metadata']['plaintext']
-    profiling_masks = in_file['Profiling_traces/metadata']['masks']
-
-    mask = [3, 12, 53, 58, 80, 95, 102, 105, 150, 153, 160, 175, 197, 202, 243, 252]
-    mask_substitution = np.zeros(256)
-    m = 0
-    for i in range(256):
-        if i == mask[m]:
-            mask_substitution[i] = m
-            m += 1
-            if m == 16:
-                break
-
-    mask_shares = [[int(r[0])] for r in zip(np.asarray(profiling_masks[:, 0]))]
-    mask_shares = mask_substitution[mask_shares]
-
-    snr = SNR(np=1, ns=len(profiling_samples[0]), nc=16)
-    snr.fit_u(np.array(profiling_samples, dtype=np.int16), x=np.array(mask_shares, dtype=np.uint16))
-    snr_val_r2 = snr.get_snr()
-
-    mask_shares = [[AES_Sbox[int(p) ^ int(k)] ^ int(r)] for p, k, r in
-                   zip(np.asarray(profiling_plaintexts[:, 0]), np.asarray(profiling_keys[:, 0]), np.asarray(profiling_masks[:, 0]))]
-    snr = SNR(np=1, ns=len(profiling_samples[0]), nc=256)
-    snr.fit_u(np.array(profiling_samples, dtype=np.int16), x=np.array(mask_shares, dtype=np.uint16))
-    snr_val_sm = snr.get_snr()
-
-    figure = plt.gcf()
-    figure.set_size_inches(12, 3)
-    plt.plot(snr_val_r2[0], linewidth=1, zorder=1, label="$r_{0}$")
-    plt.plot(snr_val_sm[0], linewidth=1, zorder=1, label="$S(p_{0}\oplus k_{0}) \oplus r_{0}$")
-    plt.xlabel("Samples", fontsize=12)
-    plt.ylabel("SNR", fontsize=12)
-    plt.xlim([0, len(profiling_samples[0])])
-    plt.legend(fontsize=12)
-    plt.xticks(fontsize=12)
-    plt.yticks(fontsize=12)
-    plt.tight_layout()
-    plt.savefig(f"{directory_dataset[feature_selection_type]}/dpa_v42_{feature_selection_type.lower()}_snr_15000.png", dpi=100)
-    plt.close()
-
-
-def compute_snr_nopoi(window):
-    in_file = h5py.File(f'{directory_dataset["NOPOI"]}/dpa_v42_nopoi_window_{window}.h5', "r")
-    profiling_samples = np.array(in_file['Profiling_traces/traces'], dtype=np.float32)
-    profiling_keys = in_file['Profiling_traces/metadata']['key']
-    profiling_plaintexts = in_file['Profiling_traces/metadata']['plaintext']
-    profiling_masks = in_file['Profiling_traces/metadata']['masks']
-
-    mask = [3, 12, 53, 58, 80, 95, 102, 105, 150, 153, 160, 175, 197, 202, 243, 252]
-    mask_substitution = np.zeros(256)
-    m = 0
-    for i in range(256):
-        if i == mask[m]:
-            mask_substitution[i] = m
-            m += 1
-            if m == 16:
-                break
-
-    mask_shares = [[int(r[0])] for r in zip(np.asarray(profiling_masks[:, 0]))]
-    mask_shares = mask_substitution[mask_shares]
-
-    snr = SNR(np=1, ns=len(profiling_samples[0]), nc=16)
-    snr.fit_u(np.array(profiling_samples, dtype=np.int16), x=np.array(mask_shares, dtype=np.uint16))
-    snr_val_r2 = snr.get_snr()
-
-    mask_shares = [[AES_Sbox[int(p) ^ int(k)] ^ int(r)] for p, k, r in
-                   zip(np.asarray(profiling_plaintexts[:, 0]), np.asarray(profiling_keys[:, 0]), np.asarray(profiling_masks[:, 0]))]
-    snr = SNR(np=1, ns=len(profiling_samples[0]), nc=256)
-    snr.fit_u(np.array(profiling_samples, dtype=np.int16), x=np.array(mask_shares, dtype=np.uint16))
-    snr_val_sm = snr.get_snr()
-
-    figure = plt.gcf()
-    figure.set_size_inches(12, 3)
-    plt.plot(snr_val_r2[0], linewidth=1, zorder=1, label="$r_{0}$")
-    plt.plot(snr_val_sm[0], linewidth=1, zorder=1, label="$S(p_{0}\oplus k_{0}) \oplus r_{0}$")
-    plt.xlabel("Samples", fontsize=12)
-    plt.ylabel("SNR", fontsize=12)
-    plt.xlim([0, len(profiling_samples[0])])
-    plt.legend(fontsize=12)
-    plt.xticks(fontsize=12)
-    plt.yticks(fontsize=12)
-    plt.tight_layout()
-    plt.savefig(f"{directory_dataset['NOPOI']}/dpa_v42_nopoi_snr_window_{window}.png", dpi=100)
-    plt.close()
-
-
-def compute_snr_rpoi(n_poi, leakage_model):
-    if leakage_model == "ID":
-        in_file = h5py.File(f'{directory_dataset["RPOI"]}/dpa_v42_{n_poi}poi.h5', 'r')
-    else:
-        in_file = h5py.File(f'{directory_dataset["RPOI"]}/dpa_v42_{n_poi}poi_hw.h5', 'r')
-
-    profiling_samples = np.array(in_file['Profiling_traces/traces'], dtype=np.float32)
-    profiling_plaintext = in_file['Profiling_traces/metadata']['plaintext']
-    profiling_key = in_file['Profiling_traces/metadata']['key']
-    profiling_masks = in_file['Profiling_traces/metadata']['masks']
-
-    mask = [3, 12, 53, 58, 80, 95, 102, 105, 150, 153, 160, 175, 197, 202, 243, 252]
-    mask_substitution = np.zeros(256)
-    m = 0
-    for i in range(256):
-        if i == mask[m]:
-            mask_substitution[i] = m
-            m += 1
-            if m == 16:
-                break
-
-    mask_shares = [[int(r[0])] for r in zip(np.asarray(profiling_masks[:, 0]))]
-    mask_shares = mask_substitution[mask_shares]
-
-    snr = SNR(np=1, ns=len(profiling_samples[0]), nc=16)
-    snr.fit_u(np.array(profiling_samples, dtype=np.int16), x=np.array(mask_shares, dtype=np.uint16))
-    snr_val_r2 = snr.get_snr()
-
-    mask_shares = [[bin(AES_Sbox[int(p) ^ int(k)] ^ int(r)).count("1")] if leakage_model == "HW" else [AES_Sbox[int(p) ^ int(k)] ^ int(r)]
-                   for p, k, r in
-                   zip(np.asarray(profiling_plaintext[:, 0]), np.asarray(profiling_key[:, 0]), np.asarray(profiling_masks[:, 0]))]
-    snr = SNR(np=1, ns=len(profiling_samples[0]), nc=256 if leakage_model == "ID" else 9)
-    snr.fit_u(np.array(profiling_samples, dtype=np.int16), x=np.array(mask_shares, dtype=np.uint16))
-    snr_val_sm = snr.get_snr()
-
-    figure = plt.gcf()
-    figure.set_size_inches(12, 3)
-    plt.plot(snr_val_r2[0], linewidth=1, zorder=1, label="$r_{2}$")
-    plt.plot(snr_val_sm[0], linewidth=1, zorder=1, label="$S(p_{2}\oplus k_{2}) \oplus r_{2}$")
-    plt.xlabel("Samples", fontsize=12)
-    plt.ylabel("SNR", fontsize=12)
-    plt.xlim([0, n_poi])
-    plt.legend(fontsize=12)
-    plt.xticks(fontsize=12)
-    plt.yticks(fontsize=12)
-    plt.tight_layout()
-    if leakage_model == "ID":
-        plt.savefig(f'{directory_dataset["RPOI"]}/dpa_v42_snr_{n_poi}poi.png', dpi=100)
-    else:
-        plt.savefig(f'{directory_dataset["RPOI"]}/dpa_v42_snr_{n_poi}poi_hw.png', dpi=100)
-    plt.close()
 
 
 def generate_rpoi(gaussian_noise=None):
@@ -259,9 +118,9 @@ def generate_rpoi(gaussian_noise=None):
             attack_index = [n for n in range(n_attack)]
 
             if leakage_model == "ID":
-                out_file = h5py.File(f'{directory_dataset["RPOI"]}/dpa_v42_{n_poi}poi.h5', 'w')
+                out_file = h5py.File(f'{dataset_folder_dpav42_rpoi}/dpa_v42_{n_poi}poi.h5', 'w')
             else:
-                out_file = h5py.File(f'{directory_dataset["RPOI"]}/dpa_v42_{n_poi}poi_hw.h5', 'w')
+                out_file = h5py.File(f'{dataset_folder_dpav42_rpoi}/dpa_v42_{n_poi}poi_hw.h5', 'w')
 
             profiling_traces_group = out_file.create_group("Profiling_traces")
             attack_traces_group = out_file.create_group("Attack_traces")
@@ -292,13 +151,9 @@ def generate_rpoi(gaussian_noise=None):
             out_file.flush()
             out_file.close()
 
-            print(n_poi)
-
-            compute_snr_rpoi(n_poi, leakage_model)
-
 
 def generate_opoi():
-    in_file = h5py.File(f'{directory_dataset["NOPOI"]}/dpa_v42_nopoi_window_20.h5', "r")
+    in_file = h5py.File(f'{dataset_folder_dpav42_nopoi}/dpa_v42_nopoi_window_20.h5', "r")
     profiling_samples = np.array(in_file['Profiling_traces/traces'], dtype=np.float16)
     attack_samples = np.array(in_file['Attack_traces/traces'], dtype=np.float16)
     profiling_keys = in_file['Profiling_traces/metadata']['key']
@@ -310,7 +165,7 @@ def generate_opoi():
     profiling_masks = in_file['Profiling_traces/metadata']['masks']
     attack_masks = in_file['Attack_traces/metadata']['masks']
 
-    out_file = h5py.File(f'{directory_dataset["OPOI"]}/dpa_v42_opoi.h5', 'w')
+    out_file = h5py.File(f'{dataset_folder_dpav42_opoi}/dpa_v42_opoi.h5', 'w')
 
     n_profiling = 70000
     n_attack = 10000
@@ -355,15 +210,13 @@ def generate_opoi():
     out_file.flush()
     out_file.close()
 
-    # compute_snr("OPOI")
-
 
 def generate_nopoi(window, desync=False):
     n_profiling = 70000
     n_attack = 10000
     number_of_samples = 150000
 
-    in_file = h5py.File(f'{directory_dataset["NOPOI"]}/dpa_v42_full.h5', 'r')
+    in_file = h5py.File(f'{dataset_folder_dpav42_nopoi}/dpa_v42_full.h5', 'r')
     profiling_samples = np.array(in_file['Profiling_traces/traces'], dtype=np.float32)[:, 150000:]
     attack_samples = np.array(in_file['Attack_traces/traces'], dtype=np.float32)[:, 150000:]
     profiling_key = in_file['Profiling_traces/metadata']['key']
@@ -412,9 +265,9 @@ def generate_nopoi(window, desync=False):
     attack_index = [n for n in range(n_attack)]
 
     if desync:
-        out_file = h5py.File(f'{directory_dataset["NOPOI"]}/dpa_v42_nopoi_window_{window}_desync.h5', 'w')
+        out_file = h5py.File(f'{dataset_folder_dpav42_nopoi}/dpa_v42_nopoi_window_{window}_desync.h5', 'w')
     else:
-        out_file = h5py.File(f'{directory_dataset["NOPOI"]}/dpa_v42_nopoi_window_{window}.h5', 'w')
+        out_file = h5py.File(f'{dataset_folder_dpav42_nopoi}/dpa_v42_nopoi_window_{window}.h5', 'w')
     profiling_traces_group = out_file.create_group("Profiling_traces")
     attack_traces_group = out_file.create_group("Attack_traces")
 
@@ -442,67 +295,13 @@ def generate_nopoi(window, desync=False):
     out_file.close()
 
 
-def generate_nopoi_15000():
-    ns = 15000
-    n_profiling = 70000
-    n_attack = 10000
-
-    in_file = h5py.File(f'{directory_dataset["NOPOI"]}/dpa_v42_nopoi.h5', "r")
-    profiling_samples = np.array(in_file['Profiling_traces/traces'], dtype=np.float32)
-    attack_samples = np.array(in_file['Attack_traces/traces'], dtype=np.float32)
-    profiling_key = in_file['Profiling_traces/metadata']['key']
-    attack_key = in_file['Attack_traces/metadata']['key']
-    profiling_plaintext = in_file['Profiling_traces/metadata']['plaintext']
-    attack_plaintext = in_file['Attack_traces/metadata']['plaintext']
-    profiling_ciphertext = in_file['Profiling_traces/metadata']['ciphertext']
-    attack_ciphertext = in_file['Attack_traces/metadata']['ciphertext']
-    profiling_masks = in_file['Profiling_traces/metadata']['masks']
-    attack_masks = in_file['Attack_traces/metadata']['masks']
-
-    profiling_samples = profiling_samples[:, ns:]
-    attack_samples = attack_samples[:, ns:]
-
-    profiling_index = [n for n in range(n_profiling)]
-    attack_index = [n for n in range(n_attack)]
-
-    out_file = h5py.File(f'{directory_dataset["NOPOI"]}/dpa_v42_nopoi_15000.h5', 'w')
-
-    profiling_traces_group = out_file.create_group("Profiling_traces")
-    attack_traces_group = out_file.create_group("Attack_traces")
-
-    profiling_traces_group.create_dataset(name="traces", data=profiling_samples, dtype=profiling_samples.dtype)
-    attack_traces_group.create_dataset(name="traces", data=attack_samples, dtype=attack_samples.dtype)
-
-    metadata_type_profiling = np.dtype([("plaintext", profiling_plaintext.dtype, (len(profiling_plaintext[0]),)),
-                                        ("ciphertext", profiling_ciphertext.dtype, (len(profiling_ciphertext[0]),)),
-                                        ("key", profiling_key.dtype, (len(profiling_key[0]),)),
-                                        ("masks", profiling_masks.dtype, (len(profiling_masks[0]),))])
-    metadata_type_attack = np.dtype([("plaintext", attack_plaintext.dtype, (len(attack_plaintext[0]),)),
-                                     ("ciphertext", attack_ciphertext.dtype, (len(attack_ciphertext[0]),)),
-                                     ("key", attack_key.dtype, (len(attack_key[0]),)),
-                                     ("masks", attack_masks.dtype, (len(attack_masks[0]),))])
-
-    profiling_metadata = np.array([(profiling_plaintext[n], profiling_ciphertext[n], profiling_key[n], profiling_masks[n]) for n, k in
-                                   zip(profiling_index, range(n_profiling))], dtype=metadata_type_profiling)
-    profiling_traces_group.create_dataset("metadata", data=profiling_metadata, dtype=metadata_type_profiling)
-
-    attack_metadata = np.array([(attack_plaintext[n], attack_ciphertext[n], attack_key[n], attack_masks[n]) for n, k in
-                                zip(attack_index, range(n_attack))], dtype=metadata_type_attack)
-    attack_traces_group.create_dataset("metadata", data=attack_metadata, dtype=metadata_type_attack)
-
-    out_file.flush()
-    out_file.close()
-
-    # compute_snr("NOPOI")
-
-
 def merge_dataset():
     n_profiling = 70000
     n_attack = 10000
 
     print("opening dpa_v42_0_100000")
 
-    in_file = h5py.File(f'{directory_dataset["NOPOI"]}/dpa_v42_0_100000.h5', 'r')
+    in_file = h5py.File(f'{dataset_folder_dpav42_nopoi}/dpa_v42_0_100000.h5', 'r')
     plaintexts = in_file['Attack_traces/metadata']['plaintext']
     ciphertexts = in_file['Attack_traces/metadata']['ciphertext']
     masks = in_file['Attack_traces/metadata']['masks']
@@ -537,7 +336,7 @@ def merge_dataset():
     profiling_index = [n for n in range(n_profiling)]
     attack_index = [n for n in range(n_attack)]
 
-    out_file = h5py.File(f'{directory_dataset["NOPOI"]}/dpa_v42_full.h5', 'w')
+    out_file = h5py.File(f'{dataset_folder_dpav42_nopoi}/dpa_v42_full.h5', 'w')
 
     profiling_traces_group = out_file.create_group("Profiling_traces")
     attack_traces_group = out_file.create_group("Attack_traces")

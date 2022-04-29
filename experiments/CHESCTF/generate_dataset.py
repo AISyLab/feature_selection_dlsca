@@ -1,9 +1,12 @@
 import numpy as np
 import h5py
 import trsfile
-from paths import *
 from numba import njit
 import random
+import sys
+from experiments.paths import *
+
+sys.path.append('/project_root_folder')
 
 """ 
 This file generates CHES CTF dataset for the experiments in the paper 
@@ -82,7 +85,7 @@ def load_trs_trace(filename, number_of_traces, number_of_samples, data_length, n
 
 
 def generate_opoi():
-    in_file = h5py.File(f'{directory_dataset["NOPOI"]}/ches_ctf_nopoi_window_20.h5', "r")
+    in_file = h5py.File(f'{dataset_folder_chesctf_nopoi}/ches_ctf_nopoi_window_20.h5', "r")
     profiling_samples = np.array(in_file['Profiling_traces/traces'], dtype=np.float16)
     attack_samples = np.array(in_file['Attack_traces/traces'], dtype=np.float16)
     profiling_keys = in_file['Profiling_traces/metadata']['key']
@@ -92,7 +95,7 @@ def generate_opoi():
     profiling_ciphertexts = in_file['Profiling_traces/metadata']['ciphertext']
     attack_ciphertexts = in_file['Attack_traces/metadata']['ciphertext']
 
-    out_file = h5py.File(f'{directory_dataset["OPOI"]}/ches_ctf_opoi.h5', 'w')
+    out_file = h5py.File(f'{dataset_folder_chesctf_opoi}/ches_ctf_opoi.h5', 'w')
 
     n_profiling = 30000
     n_attack = 10000
@@ -143,33 +146,37 @@ def generate_nopoi(window):
     profiling_ciphertexts = np.zeros((n_profiling, 16))
     profiling_keys = np.zeros((n_profiling, 16))
 
-    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{raw_trace_folder_chesctf}/PinataAcqTask2.1_10k_upload.trs", n_traces_file, 150000, 48,
+    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{raw_trace_folder_chesctf}/PinataAcqTask2.1_10k_upload.trs", n_traces_file,
+                                                            150000, 48,
                                                             number_of_samples_resampled=number_of_samples, window=window)
     profiling_samples[:n_traces_file] = samples
     profiling_plaintexts[:n_traces_file] = plaintexts
     profiling_ciphertexts[:n_traces_file] = ciphertexts
     profiling_keys[:n_traces_file] = keys
 
-    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{raw_trace_folder_chesctf}/PinataAcqTask2.2_10k_upload.trs", n_traces_file, 150000, 48,
+    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{raw_trace_folder_chesctf}/PinataAcqTask2.2_10k_upload.trs", n_traces_file,
+                                                            150000, 48,
                                                             number_of_samples_resampled=number_of_samples, window=window)
     profiling_samples[n_traces_file:n_traces_file * 2] = samples
     profiling_plaintexts[n_traces_file:n_traces_file * 2] = plaintexts
     profiling_ciphertexts[n_traces_file:n_traces_file * 2] = ciphertexts
     profiling_keys[n_traces_file:n_traces_file * 2] = keys
 
-    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{raw_trace_folder_chesctf}/PinataAcqTask2.3_10k_upload.trs", n_traces_file, 150000, 48,
+    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{raw_trace_folder_chesctf}/PinataAcqTask2.3_10k_upload.trs", n_traces_file,
+                                                            150000, 48,
                                                             number_of_samples_resampled=number_of_samples, window=window)
     profiling_samples[n_traces_file * 2:n_traces_file * 3] = samples
     profiling_plaintexts[n_traces_file * 2:n_traces_file * 3] = plaintexts
     profiling_ciphertexts[n_traces_file * 2:n_traces_file * 3] = ciphertexts
     profiling_keys[n_traces_file * 2:n_traces_file * 3] = keys
 
-    attack_samples, attack_plaintexts, attack_ciphertexts, attack_keys = load_trs_trace(f"{raw_trace_folder_chesctf}/PinataAcqTask2.4_10k_upload.trs",
-                                                                                        n_traces_file, 150000, 48,
-                                                                                        number_of_samples_resampled=number_of_samples,
-                                                                                        window=window)
+    attack_samples, attack_plaintexts, attack_ciphertexts, attack_keys = load_trs_trace(
+        f"{raw_trace_folder_chesctf}/PinataAcqTask2.4_10k_upload.trs",
+        n_traces_file, 150000, 48,
+        number_of_samples_resampled=number_of_samples,
+        window=window)
 
-    out_file = h5py.File(f'{directory_dataset["NOPOI"]}/ches_ctf_nopoi_window_{window}.h5', 'w')
+    out_file = h5py.File(f'{dataset_folder_chesctf_nopoi}/ches_ctf_nopoi_window_{window}.h5', 'w')
 
     profiling_traces_group = out_file.create_group("Profiling_traces")
     attack_traces_group = out_file.create_group("Attack_traces")
@@ -206,33 +213,37 @@ def generate_nopoi_desync(window):
     profiling_ciphertexts = np.zeros((n_profiling, 16))
     profiling_keys = np.zeros((n_profiling, 16))
 
-    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{raw_trace_folder_chesctf}/PinataAcqTask2.1_10k_upload.trs", n_traces_file, 150000, 48,
+    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{raw_trace_folder_chesctf}/PinataAcqTask2.1_10k_upload.trs", n_traces_file,
+                                                            150000, 48,
                                                             number_of_samples_resampled=number_of_samples, window=window, desync=True)
     profiling_samples[:n_traces_file] = samples
     profiling_plaintexts[:n_traces_file] = plaintexts
     profiling_ciphertexts[:n_traces_file] = ciphertexts
     profiling_keys[:n_traces_file] = keys
 
-    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{raw_trace_folder_chesctf}/PinataAcqTask2.2_10k_upload.trs", n_traces_file, 150000, 48,
+    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{raw_trace_folder_chesctf}/PinataAcqTask2.2_10k_upload.trs", n_traces_file,
+                                                            150000, 48,
                                                             number_of_samples_resampled=number_of_samples, window=window, desync=True)
     profiling_samples[n_traces_file:n_traces_file * 2] = samples
     profiling_plaintexts[n_traces_file:n_traces_file * 2] = plaintexts
     profiling_ciphertexts[n_traces_file:n_traces_file * 2] = ciphertexts
     profiling_keys[n_traces_file:n_traces_file * 2] = keys
 
-    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{raw_trace_folder_chesctf}/PinataAcqTask2.3_10k_upload.trs", n_traces_file, 150000, 48,
+    samples, plaintexts, ciphertexts, keys = load_trs_trace(f"{raw_trace_folder_chesctf}/PinataAcqTask2.3_10k_upload.trs", n_traces_file,
+                                                            150000, 48,
                                                             number_of_samples_resampled=number_of_samples, window=window, desync=True)
     profiling_samples[n_traces_file * 2:n_traces_file * 3] = samples
     profiling_plaintexts[n_traces_file * 2:n_traces_file * 3] = plaintexts
     profiling_ciphertexts[n_traces_file * 2:n_traces_file * 3] = ciphertexts
     profiling_keys[n_traces_file * 2:n_traces_file * 3] = keys
 
-    attack_samples, attack_plaintexts, attack_ciphertexts, attack_keys = load_trs_trace(f"{raw_trace_folder_chesctf}/PinataAcqTask2.4_10k_upload.trs",
-                                                                                        n_traces_file, 150000, 48,
-                                                                                        number_of_samples_resampled=number_of_samples,
-                                                                                        window=window, desync=True)
+    attack_samples, attack_plaintexts, attack_ciphertexts, attack_keys = load_trs_trace(
+        f"{raw_trace_folder_chesctf}/PinataAcqTask2.4_10k_upload.trs",
+        n_traces_file, 150000, 48,
+        number_of_samples_resampled=number_of_samples,
+        window=window, desync=True)
 
-    out_file = h5py.File(f'{directory_dataset["NOPOI"]}/ches_ctf_nopoi_window_{window}_desync.h5', 'w')
+    out_file = h5py.File(f'{dataset_folder_chesctf_nopoi_desync}/ches_ctf_nopoi_window_{window}_desync.h5', 'w')
 
     profiling_traces_group = out_file.create_group("Profiling_traces")
     attack_traces_group = out_file.create_group("Attack_traces")

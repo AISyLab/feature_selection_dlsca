@@ -9,7 +9,7 @@ import time
 import glob
 import numpy as np
 
-sys.path.append('/home/nfs/gperin/feature_selection_paper')
+sys.path.append('/project_root_folder')
 
 os.environ["OMP_NUM_THREADS"] = '2'  # export OMP_NUM_THREADS=4
 os.environ["OPENBLAS_NUM_THREADS"] = '2'  # export OPENBLAS_NUM_THREADS=4
@@ -20,7 +20,19 @@ import importlib
 from src.datasets.ReadCHESCTF import ReadCHESCTF
 from src.datasets.dataset_parameters import *
 from src.sca_metrics.sca_metrics import sca_metrics
-from experiments.CHESCTF.paths import *
+from experiments.paths import *
+
+
+def dataset_name(fs_type, resampling_window):
+    dataset_name = {
+        "OPOI": "ches_ctf_opoi.h5",
+        "NOPOI": f"ches_ctf_nopoi_window_{resampling_window}.h5",
+        "NOPOI_DESYNC": f"ches_ctf_nopoi_window_{resampling_window}_desync.h5"
+
+    }
+
+    return dataset_name[fs_type]
+
 
 if __name__ == "__main__":
     leakage_model = sys.argv[1]
@@ -29,14 +41,23 @@ if __name__ == "__main__":
     npoi = int(sys.argv[4])
     target_byte = int(sys.argv[5])
     window = int(sys.argv[6])
-    desync = True if sys.argv[7] == "True" else False
 
-    data_folder = directory_dataset[feature_selection_type]
-    save_folder = directory_save_folder_best_models[feature_selection_type]
-    if desync:
-        filename = f"{data_folder}/{dataset_name_desync(feature_selection_type, window=window)}"
+    if feature_selection_type == "OPOI":
+        dataset_folder = dataset_folder_chesctf_opoi
+        save_folder = results_folder_chesctf_opoi
+    elif feature_selection_type == "NOPOI":
+        dataset_folder = dataset_folder_chesctf_nopoi
+        save_folder = results_folder_chesctf_nopoi
+    elif feature_selection_type == "NOPOI_DESYNC":
+        dataset_folder = dataset_folder_chesctf_nopoi_desync
+        save_folder = results_folder_chesctf_nopoi_desync
     else:
-        filename = f"{data_folder}/{dataset_name(feature_selection_type, npoi, window=window)}"
+        dataset_folder = None
+        save_folder = None
+        print("ERROR: Feature selection type not found.")
+        exit()
+
+    filename = f"{dataset_folder}/{dataset_name(feature_selection_type, resampling_window=window)}"
 
     """ Parameters for the analysis """
     classes = 9 if leakage_model == "HW" else 256
@@ -60,8 +81,6 @@ if __name__ == "__main__":
         number_of_samples=npoi,
         reshape_to_cnn=False if model_name == "mlp" else True,
     )
-
-    start_time = time.time()
 
     """ Create random model """
     module_name = importlib.import_module(f"experiments.CHESCTF.{feature_selection_type}.best_models")
@@ -100,17 +119,3 @@ if __name__ == "__main__":
     print(f"GE attack: {ge_attack[n_attack_ge - 1]}")
     print(f"SR attack: {sr_attack[n_attack_ge - 1]}")
     print(f"Number of traces to reach GE = 1: {nt_attack}")
-
-    total_time = time.time() - start_time
-
-    hp = None
-
-    """ Create dictionary with results """
-    npz_dict = {"npoi": npoi, "target_byte": target_byte, "n_profiling": n_profiling, "n_attack": n_attack,
-                "n_validation": n_validation, "n_attack_ge": n_attack_ge, "n_validation_ge": n_validation_ge, "hp": hp,
-                "ge_validation": ge_validation, "sr_validation": sr_validation, "nt_validation": nt_validation, "ge_attack": ge_attack,
-                "sr_attack": sr_attack, "nt_attack": nt_attack, "accuracy": accuracy, "val_accuracy": val_accuracy, "loss": loss,
-                "val_loss": val_loss, "elapsed_time": total_time, "params": model.count_params()}
-
-    """ Save npz file with results """
-    np.savez(f"{save_folder}/chesctf_{model_name}_{leakage_model}_{npoi}_{target_byte}.npz", npz_dict=npz_dict)

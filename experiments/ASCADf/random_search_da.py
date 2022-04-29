@@ -13,16 +13,27 @@ import time
 import glob
 import sys
 
-sys.path.append('/home/nfs/gperin/feature_selection_paper')
+sys.path.append('/project_root_folder')
 
 from src.random_models.random_mlp import *
 from src.random_models.random_cnn import *
 from src.datasets.ReadASCADf import ReadASCADf
 from src.datasets.dataset_parameters import *
 from src.sca_metrics.sca_metrics import sca_metrics
-from experiments.ASCADf.paths import *
+from experiments.paths import *
 import numpy as np
 import random
+
+
+def dataset_name(fs_type, num_poi, resampling_window=10):
+    dataset_name = {
+        "RPOI": f"ASCAD_{num_poi}poi.h5",
+        "OPOI": "ASCAD.h5",
+        "NOPOI": f"ASCAD_nopoi_window_{resampling_window}.h5",
+        "NOPOI_DESYNC": f"ASCAD_nopoi_window_{resampling_window}_desync.h5"
+    }
+
+    return dataset_name[fs_type]
 
 
 def data_augmentation_shifts(data_set_samples, data_set_labels, batch_size, model_name):
@@ -62,14 +73,26 @@ if __name__ == "__main__":
     number_of_searches = int(sys.argv[5])
     regularization = True if sys.argv[6] == "True" else False
     window = int(sys.argv[7])
-    desync = True if sys.argv[8] == "True" else False
 
-    data_folder = directory_dataset[feature_selection_type]
-    save_folder = directory_save_folder[feature_selection_type]
-    if desync:
-        filename = f"{data_folder}/{dataset_name_desync(feature_selection_type, window=window)}"
+    if feature_selection_type == "RPOI":
+        dataset_folder = dataset_folder_ascadf_rpoi
+        save_folder = results_folder_ascadf_rpoi
+    elif feature_selection_type == "OPOI":
+        dataset_folder = dataset_folder_ascadf_opoi
+        save_folder = results_folder_ascadf_opoi
+    elif feature_selection_type == "NOPOI":
+        dataset_folder = dataset_folder_ascadf_nopoi
+        save_folder = results_folder_ascadf_nopoi
+    elif feature_selection_type == "NOPOI_DESYNC":
+        dataset_folder = dataset_folder_ascadf_nopoi_desync
+        save_folder = results_folder_ascadf_nopoi_desync
     else:
-        filename = f"{data_folder}/{dataset_name(feature_selection_type, npoi, window=window)}"
+        dataset_folder = None
+        save_folder = None
+        print("ERROR: Feature selection type not found.")
+        exit()
+
+    filename = f"{dataset_folder}/{dataset_name(feature_selection_type, npoi, resampling_window=window)}"
 
     """ Parameters for the analysis """
     classes = 9 if leakage_model == "HW" else 256

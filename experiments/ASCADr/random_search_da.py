@@ -13,16 +13,27 @@ import time
 import glob
 import sys
 
-sys.path.append('/home/nfs/gperin/feature_selection_paper')
+sys.path.append('/project_root_folder')
 
 from src.random_models.random_mlp import *
 from src.random_models.random_cnn import *
 from src.datasets.ReadASCADr import ReadASCADr
 from src.datasets.dataset_parameters import *
 from src.sca_metrics.sca_metrics import sca_metrics
-from experiments.ASCADr.paths import *
 import numpy as np
 import random
+from experiments.paths import *
+
+
+def dataset_name(fs_type, num_poi, resampling_window=20):
+    dataset_name = {
+        "RPOI": f"ascad-variable_{num_poi}poi.h5",
+        "OPOI": "ascad-variable.h5",
+        "NOPOI": f"ascad-variable_nopoi_window_{resampling_window}.h5",
+        "NOPOI_DESYNC": f"ascad-variable_nopoi_window_{resampling_window}_desync.h5"
+    }
+
+    return dataset_name[fs_type]
 
 
 def data_augmentation_shifts(data_set_samples, data_set_labels, batch_size, model_name):
@@ -62,14 +73,26 @@ if __name__ == "__main__":
     number_of_searches = int(sys.argv[5])
     regularization = True if sys.argv[6] == "True" else False
     window = int(sys.argv[7])
-    desync = True if sys.argv[8] == "True" else False
 
-    data_folder = directory_dataset[feature_selection_type]
-    save_folder = directory_save_folder[feature_selection_type]
-    if desync:
-        filename = f"{data_folder}/{dataset_name_desync(feature_selection_type, window=window)}"
+    if feature_selection_type == "RPOI":
+        dataset_folder = dataset_folder_ascadr_rpoi
+        save_folder = results_folder_ascadr_rpoi
+    elif feature_selection_type == "OPOI":
+        dataset_folder = dataset_folder_ascadr_opoi
+        save_folder = results_folder_ascadr_opoi
+    elif feature_selection_type == "NOPOI":
+        dataset_folder = dataset_folder_ascadr_nopoi
+        save_folder = results_folder_ascadr_nopoi
+    elif feature_selection_type == "NOPOI_DESYNC":
+        dataset_folder = dataset_folder_ascadr_nopoi_desync
+        save_folder = results_folder_ascadr_nopoi_desync
     else:
-        filename = f"{data_folder}/{dataset_name(feature_selection_type, npoi, window=window)}"
+        dataset_folder = None
+        save_folder = None
+        print("ERROR: Feature selection type not found.")
+        exit()
+
+    filename = f"{dataset_folder}/{dataset_name(feature_selection_type, npoi, resampling_window=window)}"
 
     """ Parameters for the analysis """
     classes = 9 if leakage_model == "HW" else 256
