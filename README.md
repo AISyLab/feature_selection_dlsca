@@ -142,28 +142,26 @@ There are six parameters to pass with the python file call:
 
 #### Testing best NOPOI models for ASCADf
 
-To run best found models for **ASCADf**, **key byte 0**, **10000** POIs, **NOPOI** with resampling window of **20** and 
-without **regularization:**
+To run best found models for **ASCADf**, **key byte 0**, **10000** POIs, **NOPOI** with resampling window of **20**:
 
-```python experiments/ASCADf/test_best_models.py HW mlp 10000 NOPOI 0 20 False```
+```python experiments/ASCADf/test_best_models.py HW mlp 10000 NOPOI 2 20```
 
-```python experiments/ASCADf/test_best_models.py ID mlp 10000 NOPOI 0 20 False```
+```python experiments/ASCADf/test_best_models.py ID mlp 10000 NOPOI 2 20```
 
-```python experiments/ASCADf/test_best_models.py HW cnn 10000 NOPOI 0 20 False```
+```python experiments/ASCADf/test_best_models.py HW cnn 10000 NOPOI 2 20```
 
-```python experiments/ASCADf/test_best_models.py ID cnn 10000 NOPOI 0 20 False```
+```python experiments/ASCADf/test_best_models.py ID cnn 10000 NOPOI 2 20```
 
 #### Testing best NOPOI models for ASCADr
 
-To run best found models for **ASCADr**, **key byte 0**, **10000** POIs, **NOPOI** with resampling window of **20** and 
-without **regularization:**
+To run best found models for **ASCADr**, **key byte 0**, **10000** POIs, **NOPOI** with resampling window of **20** :
 
-```python experiments/ASCADr/test_best_models.py HW mlp 25000 NOPOI 0 20 False```
+```python experiments/ASCADr/test_best_models.py HW mlp 25000 NOPOI 2 20```
 
-```python experiments/ASCADr/test_best_models.py ID mlp 25000 NOPOI 0 20 False```
+```python experiments/ASCADr/test_best_models.py ID mlp 25000 NOPOI 2 20```
 
-```python experiments/ASCADr/test_best_models.py HW cnn 25000 NOPOI 0 20 False```
+```python experiments/ASCADr/test_best_models.py HW cnn 25000 NOPOI 2 20```
 
-```python experiments/ASCADr/test_best_models.py ID cnn 25000 NOPOI 0 20 False```
+```python experiments/ASCADr/test_best_models.py ID cnn 25000 NOPOI 2 20```
 
 

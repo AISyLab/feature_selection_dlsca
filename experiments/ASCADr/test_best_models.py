@@ -65,12 +65,12 @@ if __name__ == "__main__":
     """ Parameters for the analysis """
     classes = 9 if leakage_model == "HW" else 256
     epochs = 100
-    ascadf_parameters = ascadf
-    n_profiling = ascadf_parameters["n_profiling"]
-    n_attack = ascadf_parameters["n_attack"]
-    n_validation = ascadf_parameters["n_validation"]
-    n_attack_ge = ascadf_parameters["n_attack_ge"]
-    n_validation_ge = ascadf_parameters["n_validation_ge"]
+    ascadr_parameters = ascadr
+    n_profiling = ascadr_parameters["n_profiling"]
+    n_attack = ascadr_parameters["n_attack"]
+    n_validation = ascadr_parameters["n_validation"]
+    n_attack_ge = ascadr_parameters["n_attack_ge"]
+    n_validation_ge = ascadr_parameters["n_validation_ge"]
 
     """ Create dataset for ASCADf """
     ascad_dataset = ReadASCADr(
