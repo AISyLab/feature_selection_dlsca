@@ -9,7 +9,7 @@ def best_mlp_hw_nopoi_25000_ascadr(classes, number_of_samples):
     # Best multilayer perceptron for ASCAD variable key dataset
     # Number of points-of-interest: 25000
     # Leakage model: HW
-    # POI interval: [0, 100000]
+    # POI interval: [0, 250000]
     # Number of parameters: 5243209
 
     batch_size = 700
@@ -33,7 +33,7 @@ def best_mlp_id_nopoi_25000_ascadr(classes, number_of_samples):
     # Best multilayer perceptron for ASCAD variable key dataset
     # Number of points-of-interest: 25000
     # Leakage model: ID
-    # POI interval: [0, 100000]
+    # POI interval: [0, 250000]
     # Number of parameters: 12628756
 
     batch_size = 100
@@ -51,7 +51,7 @@ def best_cnn_hw_nopoi_25000_ascadr(classes, number_of_samples):
     # Best Convolutional Neural Network for ASCAD variable key dataset
     # Number of points-of-interest: 25000
     # Leakage model: HW
-    # POI interval: [0, 100000]
+    # POI interval: [0, 250000]
     # Number of parameters: 369109
 
     batch_size = 400
@@ -80,11 +80,12 @@ def best_cnn_hw_nopoi_25000_ascadr(classes, number_of_samples):
     return model, batch_size
 
 
+# MODEL 1
 def best_cnn_id_nopoi_25000_ascadr(classes, number_of_samples):
     # Best Convolutional Neural Network for ASCAD variable key dataset
     # Number of points-of-interest: 25000
     # Leakage model: ID
-    # POI interval: [0, 100000]
+    # POI interval: [0, 250000]
     # Number of parameters: 721012
 
     batch_size = 600
@@ -102,3 +103,52 @@ def best_cnn_id_nopoi_25000_ascadr(classes, number_of_samples):
     optimizer = Adam(learning_rate=0.0005)
     model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
     return model, batch_size
+
+# MODEL 2
+# def best_cnn_id_nopoi_25000_ascadr(classes, number_of_samples):
+#     # Best Convolutional Neural Network for ASCAD variable key dataset
+#     # Number of points-of-interest: 25000
+#     # Leakage model: ID
+#     # POI interval: [0, 250000]
+#     # Number of parameters: 145848
+#
+#     batch_size = 900
+#     tf.random.set_seed(415696)
+#     model = Sequential(name='best_cnn_id_nopoi_ascadr_25000')
+#     model.add(Conv1D(kernel_size=47, strides=47, filters=12, activation='selu', input_shape=(number_of_samples, 1), padding='same'))
+#     model.add(MaxPooling1D(pool_size=2, strides=2, padding='same'))
+#     model.add(BatchNormalization())
+#     model.add(Conv1D(kernel_size=46, strides=47, filters=24, activation='selu', padding='same'))
+#     model.add(MaxPooling1D(pool_size=2, strides=2, padding='same'))
+#     model.add(BatchNormalization())
+#     model.add(Flatten())
+#     model.add(Dense(400, activation='selu', kernel_initializer='glorot_uniform'))
+#     model.add(Dense(classes, activation='softmax'))
+#     model.summary()
+#     optimizer = Adam(learning_rate=0.005)
+#     model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+#     return model, batch_size
+
+# MODEL 3
+# def best_cnn_id_nopoi_25000_ascadr(classes, number_of_samples):
+#     # Best Convolutional Neural Network for ASCAD variable key dataset
+#     # Number of points-of-interest: 25000
+#     # Leakage model: ID
+#     # POI interval: [0, 250000]
+#     # Number of parameters: 380104
+#
+#     batch_size = 300
+#     tf.random.set_seed(353786)
+#     model = Sequential(name='best_cnn_id_nopoi_ascadr_25000')
+#     model.add(Conv1D(kernel_size=24, strides=45, filters=12, activation='selu', input_shape=(number_of_samples, 1), padding='same'))
+#     model.add(AveragePooling1D(pool_size=2, strides=2, padding='same'))
+#     model.add(BatchNormalization())
+#     model.add(Flatten())
+#     model.add(Dense(100, activation='selu', kernel_initializer='random_uniform'))
+#     model.add(Dense(100, activation='selu', kernel_initializer='random_uniform'))
+#     model.add(Dense(100, activation='selu', kernel_initializer='random_uniform'))
+#     model.add(Dense(classes, activation='softmax'))
+#     model.summary()
+#     optimizer = Adam(learning_rate=0.001)
+#     model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+#     return model, batch_size
