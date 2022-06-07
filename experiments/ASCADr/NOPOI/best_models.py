@@ -87,7 +87,7 @@ def best_cnn_id_nopoi_25000_ascadr(classes, number_of_samples):
     # POI interval: [0, 100000]
     # Number of parameters: 721012
 
-    batch_size = 900
+    batch_size = 600
     tf.random.set_seed(161399)
     model = Sequential(name='best_cnn_id_nopoi_ascadr_25000')
     model.add(Conv1D(kernel_size=34, strides=17, filters=4, activation='selu', input_shape=(number_of_samples, 1), padding='same'))
