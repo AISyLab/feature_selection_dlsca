@@ -70,7 +70,7 @@ def load_trs_trace(filename, number_of_traces, number_of_samples, data_length, n
                     trace_tmp_shifted[abs(shift):number_of_samples] = trace_tmp[0:number_of_samples - abs(shift)]
                 trace_tmp = trace_tmp_shifted
             else:
-                trace_tmp = abs(trace[sample_offset:sample_offset + number_of_samples])
+                trace_tmp = trace[sample_offset:sample_offset + number_of_samples]
 
             samples[i] = winres(trace_tmp, window=window)
         else:
